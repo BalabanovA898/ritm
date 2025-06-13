@@ -31,7 +31,7 @@ POSITION LEFT HERO2
 
 SAY HERO What do you think 'bout Кириллица
 
-LOADGDSCENE res://main.tscn
+BACKGROUND HERO2
 
 OPTIONS
 CHOOSE1 = 1 Норм

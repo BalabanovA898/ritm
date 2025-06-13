@@ -190,7 +190,18 @@ func handle_line():
 				charecters[2] = scene;
 				add_child(scene);
 		update_charecters()
-
+	if splited_line[0] == "BACKGROUND":
+		var image = Image.load_from_file(PRELOADS[splited_line[1]])
+		backgorund_width = image.get_width()
+		background_height = image.get_height()
+		var window = get_window().size
+		print(window.x, ' ', window.y,' ',  backgorund_width,' ', background_height)
+		background.texture = ImageTexture.create_from_image(image)
+		background.scale.x = float(window.x) / float(backgorund_width)
+		background.scale.y = float(window.y) / float(background_height)
+		background.position.x = float(window.x) / float(backgorund_width) * backgorund_width / 2
+		background.position.y = float(window.y) / float(background_height) * background_height / 2
+		
 func update_charecters():
 	var window = get_window().size
 	var charecter_width = float(window.x)/3
