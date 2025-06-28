@@ -1,6 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://dr6btciyqxura"]
 
+
 [ext_resource type="Script" uid="uid://bd3n57nq7u8rn" path="res://dialog.gd" id="1_5wlj5"]
+
 [ext_resource type="Texture2D" uid="uid://bpefy2mhaoct0" path="res://VN/images/HERO2.jpg" id="2_5wlj5"]
 [ext_resource type="Texture2D" uid="uid://cahr2f2a8tdqh" path="res://textures/out (1) (1) (1).png" id="2_w7j6r"]
 

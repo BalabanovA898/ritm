@@ -11,9 +11,14 @@ config_version=5
 [application]
 
 config/name="RITM"
-run/main_scene="uid://hf51pbhurlj1"
+run/main_scene="uid://b5u86t344ewil"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+LevelData="*res://LevelData.gd"
+Global="*res://Global.gd"
 
 [debug]
 

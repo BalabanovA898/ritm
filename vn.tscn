@@ -1,6 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bbk1jbvqdvdjn"]
 
-[ext_resource type="Script" uid="uid://dwrdcbw73e3vt" path="res://vn.gd" id="1_u6t4w"]
+[ext_resource type="Script" path="res://vn.gd" id="1_u6t4w"]
+
 [ext_resource type="Texture2D" uid="uid://bpefy2mhaoct0" path="res://VN/images/HERO2.jpg" id="2_dhfb4"]
 
 [node name="VN" type="Node2D"]
