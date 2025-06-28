@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://bs8866u58vdr"]
+
+[ext_resource type="Script" uid="uid://bupktqb3vu1tr" path="res://platfrom_ftm.gd" id="1_wrpor"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_glqua"]
+transparency = 1
+albedo_color = Color(1, 1, 1, 0)
+
+[node name="PlatfromFTM" type="Node3D"]
+script = ExtResource("1_wrpor")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+use_collision = true
+size = Vector3(1, 0.15, 1)
+material = SubResource("StandardMaterial3D_glqua")
