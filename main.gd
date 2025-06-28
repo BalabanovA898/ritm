@@ -27,13 +27,13 @@ var next_platform_position = 0
 @onready var ui_manager = $UIManager
 
 var FTM_MODE = false;
-var DT_MODE = false;
+var DT_MODE = true;
 var HT_MODE = false;
 var FIVE_TILE_MODE = true;
 var SEVEN_TILE_MODE = false;
-var DRUNK_MODE = true;
+var DRUNK_MODE = false;
 
-var time_mult
+var time_mult = 1
 
 
 func _ready():
@@ -45,7 +45,6 @@ func _ready():
 
 	print("Загрузка уровня с индексом: ", level_index)
 	timer.global_position.y = 0
-	load_level(level_index)
 	
 	for x in borders:
 		x.Player = Player
@@ -85,7 +84,7 @@ func _ready():
 	
 	Player.SPEED *= time_mult
 	$MusicController.pitch_scale = time_mult
-	load_level(DEBUG_LEVEL);
+	load_level(level_index)
 	$MusicController.load_music(current_directory + "/" + path_to_music.erase(path_to_music.length() -1));
 
 func _process(delta: float) -> void:
@@ -111,9 +110,6 @@ func _process(delta: float) -> void:
 	if DRUNK_MODE:
 		Player.get_child(2).get_child(0).rotation.z += 3600.0 / float(beatmap[-2]) * delta 
 		print(Player.get_child(2).get_child(0).rotation.y)
-func load_level (index: int):
-	var dir: DirAccess = DirAccess.open("user://levels");
-
 func load_level(index: int):
 	var dir: DirAccess = DirAccess.open("user://levels")
 
@@ -138,7 +134,7 @@ func load_level(index: int):
 	else :
 		level = FileAccess.open(current_directory + "/" + levels[0], FileAccess.READ).get_as_text();
 	beatmap = Array(level.get_slice("[HitObjects]", 1).split("\n")).map(func(x): return int( x.get_slice(",", 2)));
-	beatmap = beatmap.map(func(x): return  x if x else 0 / time_mult);
+	beatmap = beatmap.map(func(x): return  (x if x else 0) / time_mult);
 	var i = 1
 	
 	while (i < beatmap.size()):

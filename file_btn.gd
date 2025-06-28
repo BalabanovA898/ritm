@@ -5,5 +5,5 @@ func _ready() -> void:
 
 func _on_menu_button_pressed(id : int) -> void:
 	match id:
-		0: get_tree().root.get_child(0).get_child(3).visible = true;
-		1: get_tree().root.get_child(0).get_child(7).visible = true;
+		0: get_tree().root.get_child(1).get_child(3).visible = true;
+		1: get_tree().root.get_child(1).get_child(7).visible = true;

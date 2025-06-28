@@ -5,6 +5,6 @@ extends HBoxContainer
 @onready var reset_btn = get_child(0)
 
 func _ready():
-	play_btn.pressed.connect(get_tree().root.get_child(0).play)
-	pause_btn.pressed.connect(get_tree().root.get_child(0).pause)	
-	reset_btn.pressed.connect(get_tree().root.get_child(0).reset)
+	play_btn.pressed.connect(get_tree().root.get_child(1).play)
+	pause_btn.pressed.connect(get_tree().root.get_child(1).pause)	
+	reset_btn.pressed.connect(get_tree().root.get_child(1).reset)

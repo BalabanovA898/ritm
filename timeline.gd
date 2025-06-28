@@ -1,7 +1,7 @@
 extends HBoxContainer
 
 var bar = load("res://stick.tscn");
-@onready var root = get_tree().root.get_child(0) 
+@onready var root = get_tree().root.get_child(1) 
 @onready var circle = preload("res://circle.tscn")
 
 var beatmap

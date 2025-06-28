@@ -312,7 +312,7 @@ func _on_campaign_button_pressed():
 	print("Запуск кампании...")
 
 func _on_level_editor_button_pressed():
-	print("Запуск редактора уровней...")
+	get_tree().change_scene_to_file("res://Editor.tscn")
 
 func _on_exit_button_pressed():
 	save_settings()

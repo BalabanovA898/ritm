@@ -3,7 +3,7 @@ extends AudioStreamPlayer
 var timer = 0;
 var delay = 0
 
-@onready var settings = get_tree().root.get_child(0);
+@onready var settings = get_tree().root.get_child(1);
 var is_on = false;
 
 func _ready():

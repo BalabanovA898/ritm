@@ -5,7 +5,7 @@ func _ready() -> void:
 
 func _on_menu_button_pressed(id : int) -> void:
 	match id:
-		0: get_tree().root.get_child(0).get_child(6).visible=true
+		0: get_tree().root.get_child(1).get_child(6).visible=true
 
 func _on_file_dialog_file_selected(path: String) -> void:
 	var abs_path = ProjectSettings.globalize_path("res://Script")
