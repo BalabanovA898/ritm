@@ -2,9 +2,9 @@ extends Node3D
 
 const DEBUG_DIFFICULTY = "hard"
 var DEBUG_SPEED = 5.0;
-const MIN_PLATFORM_LENGTH = 0.6;
-const DEBUG_NOOB_COEFICIENT = 0.7;
 const JUMP_TIME = 0.4;
+const MIN_PLATFORM_LENGTH = 0.2;
+const DEBUG_NOOB_COEFICIENT = 0.7;
 var level_index: int = Global.selected_level_index
 
 var current_directory

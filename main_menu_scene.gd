@@ -58,7 +58,7 @@ func _ready():
 	menu_container.add_child(vbox)
 	
 	var button_size = Vector2(300, 60)
-	create_button(vbox, button_size, "Сюжет", _on_campaign_button_pressed)
+	#create_button(vbox, button_size, "Сюжет", _on_campaign_button_pressed)
 	create_button(vbox, button_size, "Уровни", _on_levels_button_pressed)
 	create_button(vbox, button_size, "Настройки", _on_settings_button_pressed)
 	create_button(vbox, button_size, "Редактор уровней", _on_level_editor_button_pressed)
@@ -306,7 +306,7 @@ func create_mods_ui():
 	FTM = CheckBox.new();
 	FTM.text = "Чувствуй!";
 	mods_list.add_child(FTM);
-	FTM.pressed.connect(func(): Global.DRUNK_MODE = FTM.button_pressed)
+	FTM.pressed.connect(func(): Global.FTM_MODE = FTM.button_pressed)
 	
 func _set_dt_mode(on):
 	if (on):
