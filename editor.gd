@@ -106,6 +106,7 @@ func _on_song_select_file_selected(path: String) -> void:
 	music_duration = stream.get_length()
 	get_node("UI/Menu2/MarginContainer/HBoxContainer/Values/DurationLb").text = str(music_duration)
 	get_node("UI/Menu2/MarginContainer/HBoxContainer/Values/FileSelectBTN").text = str(path)
+	music_src_path = path
 
 func load_level (path):
 	var level = FileAccess.open(path, FileAccess.READ).get_as_text()
@@ -145,7 +146,7 @@ func _on_save_dialog_dir_selected(dir: String) -> void:
 		DirAccess.copy_absolute(music_src_path, dir + "/" +music_src_path.get_slice("/", music_src_path.split("/").size() - 1))
 		var out = FileAccess.open(dir + "/" + project_name.trim_suffix("\n") + ".osu", FileAccess.WRITE);
 		assert(out.is_open())
-		var string_to_save = "osu file format v5\n[General]\nAudioFilename:" + music_src_path.get_slice("/", music_src_path.split("/").size() - 1) + "\nAudioLeadIn: 0\nPreviewTime: -1\nCountdown: 0\nSampleSet: Soft\n[HitObjects]\n"
+		var string_to_save = "osu file format v5\n[General]\nAudioFilename:" + music_src_path.get_slice("/", music_src_path.split("/").size() - 1 ) + "\nAudioLeadIn: 0\nPreviewTime: -1\nCountdown: 0\nSampleSet: Soft\n[HitObjects]\n"
 	
 		out.store_string(string_to_save);
 		out.store_string("\n".join(beatmap.map(func (x): return "0,0," + str(x) + ",1")))

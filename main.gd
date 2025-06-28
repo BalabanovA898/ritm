@@ -27,7 +27,7 @@ var next_platform_position = 0
 @onready var ui_manager = $UIManager
 
 var FTM_MODE = false;
-var DT_MODE = true;
+var DT_MODE = false;
 var HT_MODE = false;
 var FIVE_TILE_MODE = true;
 var SEVEN_TILE_MODE = false;
@@ -110,6 +110,7 @@ func _process(delta: float) -> void:
 	if DRUNK_MODE:
 		Player.get_child(2).get_child(0).rotation.z += 3600.0 / float(beatmap[-2]) * delta 
 		print(Player.get_child(2).get_child(0).rotation.y)
+
 func load_level(index: int):
 	var dir: DirAccess = DirAccess.open("user://levels")
 
@@ -136,7 +137,7 @@ func load_level(index: int):
 	beatmap = Array(level.get_slice("[HitObjects]", 1).split("\n")).map(func(x): return int( x.get_slice(",", 2)));
 	beatmap = beatmap.map(func(x): return  (x if x else 0) / time_mult);
 	var i = 1
-	
+	print(beatmap)
 	while (i < beatmap.size()):
 		if float(beatmap[i] - beatmap[i - 1])/1000.0 * DEBUG_SPEED < MIN_PLATFORM_LENGTH + (DEBUG_SPEED * JUMP_TIME) * (1 / DEBUG_NOOB_COEFICIENT):
 			beatmap.remove_at(i)
