@@ -26,18 +26,10 @@ var next_platform_position = 0
 @onready var timer: Sprite2D = get_node("UI").get_child(0)
 @onready var ui_manager = $UIManager
 
-var FTM_MODE = false;
-var DT_MODE = false;
-var HT_MODE = false;
-var FIVE_TILE_MODE = true;
-var SEVEN_TILE_MODE = false;
-var DRUNK_MODE = false;
-
 var time_mult = 1
 
-
 func _ready():
-	if (!FTM_MODE):
+	if (!Global.FTM_MODE):
 		platform = preload("res://platform.tscn");
 	else:
 		platform = preload("res://platfrom_ftm.tscn")
@@ -72,10 +64,10 @@ func _ready():
 	ui_manager.connect("retry_pressed", reset_game)
 	
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	if (DT_MODE):
+	if (Global.DT_MODE):
 		time_mult = 1.25
 		DEBUG_SPEED = 5 * 1.25
-	elif HT_MODE:
+	elif Global.HT_MODE:
 		time_mult = 0.75
 		DEBUG_SPEED = 5 * 0.75
 	else:
@@ -107,7 +99,7 @@ func _process(delta: float) -> void:
 			else:
 				sky.environment.sky.sky_material.set("shader_parameter/sun_color", Vector3(r + 1, g  + 1, b + 1));
 				light.light_color = Color(255 - r, 255 - g, 255 - b);
-	if DRUNK_MODE:
+	if Global.DRUNK_MODE:
 		Player.get_child(2).get_child(0).rotation.z += 3600.0 / float(beatmap[-2]) * delta 
 		print(Player.get_child(2).get_child(0).rotation.y)
 
@@ -160,14 +152,14 @@ func create_platform(index: int) -> void:
 	var a = 1 if abs(last_platform_position - next_platform_position) == 2 else 0;
 	var distance_to_next_platform = sqrt(max(c ** 2 - a ** 2 * DEBUG_NOOB_COEFICIENT, 0));
 	last_platform_position = next_platform_position;
-	if (FIVE_TILE_MODE or SEVEN_TILE_MODE):
+	if (Global.FIVE_TILE_MODE or Global.SEVEN_TILE_MODE):
 		scene.position = Vector3(Player.position.x + distance_to_next_platform , 0, float(next_platform_position)/2);
 	else:
 		scene.position = Vector3(Player.position.x + distance_to_next_platform , 0, next_platform_position);
 	scene.id = beatmap_index;
-	if (FIVE_TILE_MODE):
+	if (Global.FIVE_TILE_MODE):
 		next_platform_position = randi_range(-2, 2);
-	elif (SEVEN_TILE_MODE):
+	elif (Global.SEVEN_TILE_MODE):
 		var rand_value = randi_range(-3, 3);
 		while (abs(rand_value - next_platform_position) > 2):
 			rand_value = randi_range(-3, 3);
@@ -177,9 +169,9 @@ func create_platform(index: int) -> void:
 	highlight_next_position(next_platform_position);
 	
 func highlight_next_position(next_position: int):
-	if (FIVE_TILE_MODE):
+	if (Global.FIVE_TILE_MODE):
 		next_position += 2;
-	if SEVEN_TILE_MODE:
+	if Global.SEVEN_TILE_MODE:
 		next_position += 3
 	else: 
 		next_position += 1;
@@ -193,7 +185,7 @@ func highlight_next_position(next_position: int):
 			material.albedo_color = Color(255, 255, 255, 0.4)
 			a.set_surface_override_material(0, material)
 			a.material_overlay = material
-	if(!FIVE_TILE_MODE and !SEVEN_TILE_MODE):
+	if(!Global.FIVE_TILE_MODE and !Global.SEVEN_TILE_MODE):
 		for x in range(next_position, next_position + 2):
 			var a: MeshInstance3D =  borders[x].get_child(0)
 			var material = a.get_surface_override_material(0);

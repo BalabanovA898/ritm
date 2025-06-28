@@ -17,9 +17,17 @@ var canvas_layer: CanvasLayer
 var menu_container: Control
 var settings_container: Control
 var levels_container: Control
+var mods_container: Control
 var volume_slider: HSlider
 var sensitivity_slider: HSlider
 var auto_respawn_checkbox: CheckBox
+
+var DT: CheckBox
+var HT: CheckBox
+var DRUNK: CheckBox
+var FTM: CheckBox
+var FIVE_TILES: CheckBox
+var SEVEN_TILES: CheckBox
 
 var level_directories = []
 var selected_level_index: int = -1
@@ -81,7 +89,9 @@ func _on_levels_button_pressed():
 	
 	if levels_container == null:
 		create_levels_ui()
+		create_mods_ui()
 	levels_container.visible = true
+	mods_container.visible = true
 
 func hide_all_panels():
 	if settings_container:
@@ -225,8 +235,111 @@ func create_levels_ui():
 	var close_button = Button.new()
 	close_button.text = "Закрыть"
 	close_button.custom_minimum_size = Vector2(150, 40)
-	close_button.pressed.connect(func(): levels_container.visible = false)
+	close_button.pressed.connect(func(): _hide_level_menu())
 	vbox.add_child(close_button)
+
+func _hide_level_menu():
+	levels_container.visible = false
+	mods_container.visible = false
+
+func create_mods_ui():
+	mods_container = Control.new();
+	mods_container.size = Vector2(350, 350)  # Больше по ширине
+	mods_container.position = Vector2(550, 100)
+	mods_container.visible = false
+	
+	canvas_layer.add_child(mods_container)
+	
+	var bg = ColorRect.new()
+	bg.color = Color(0.15, 0.15, 0.2, 0.95)
+	bg.size = mods_container.size
+	mods_container.add_child(bg)
+	
+	var vbox = VBoxContainer.new()
+	vbox.size = mods_container.size - Vector2(20, 20)
+	vbox.position = Vector2(10, 10)
+	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	mods_container.add_child(vbox)
+	
+	var title = Label.new()
+	title.text = "МОДИФИКАТОРЫ"
+	title.add_theme_font_size_override("font_size", 28)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(title)
+	
+	var mods_control = HBoxContainer.new()
+	mods_control.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	mods_control.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.add_child(mods_control)
+	
+	vbox.add_child(HSeparator.new())
+	
+	var mods_list = VBoxContainer.new()
+	mods_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	vbox.add_child(mods_list)
+	
+	DT = CheckBox.new();
+	DT.text = "Double Time"
+	mods_list.add_child(DT);
+	DT.pressed.connect(func(): _set_dt_mode(DT.button_pressed))
+
+	HT = CheckBox.new();
+	HT.text = "Half Time"
+	mods_list.add_child(HT);
+	HT.pressed.connect(func(): _set_ht_mode(HT.button_pressed))
+
+	FIVE_TILES = CheckBox.new();
+	FIVE_TILES.text = "Five Tiles"
+	mods_list.add_child(FIVE_TILES);
+	FIVE_TILES.pressed.connect(func(): _set_5t_mode(FIVE_TILES.button_pressed))
+
+	SEVEN_TILES = CheckBox.new();
+	SEVEN_TILES.text = "Seven Tiles"
+	mods_list.add_child(SEVEN_TILES);
+	SEVEN_TILES.pressed.connect(func(): _set_7t_mode(SEVEN_TILES.button_pressed))
+
+	DRUNK = CheckBox.new();
+	DRUNK.text = "Пьяный мастер";
+	mods_list.add_child(DRUNK);
+	DRUNK.pressed.connect(func(): Global.DRUNK_MODE = DRUNK.button_pressed)
+	
+	FTM = CheckBox.new();
+	FTM.text = "Чувствуй!";
+	mods_list.add_child(FTM);
+	FTM.pressed.connect(func(): Global.DRUNK_MODE = FTM.button_pressed)
+	
+func _set_dt_mode(on):
+	if (on):
+		Global.DT_MODE = true;
+		Global.HT_MODE = false;
+		HT.button_pressed = false
+	else :
+		Global.DT_MODE = false;
+
+func _set_ht_mode(on):
+	if (on):
+		Global.HT_MODE = true;
+		Global.DT_MODE = false;
+		DT.button_pressed = false
+	else :
+		Global.HT_MODE = false;
+
+func _set_5t_mode(on):
+	if (on):
+		Global.FIVE_TILE_MODE = true;
+		Global.SEVEN_TILE_MODE = false;
+		SEVEN_TILES.button_pressed = false
+	else :
+		Global.FIVE_TILE_MODE = false;
+
+func _set_7t_mode(on):
+	if (on):
+		Global.SEVEN_TILE_MODE = true;
+		Global.FIVE_TILE_MODE = false;
+		FIVE_TILES.button_pressed = false
+	else :
+		Global.SEVEN_TILE_MODE = false;
+
 
 func load_real_levels(container: VBoxContainer):
 	for child in container.get_children():
