@@ -15,6 +15,7 @@ var SENSETIVITY: float
 var pause_menu: CanvasLayer
 var continue_button: Button
 var settings_button: Button
+var exit_button: Button
 var settings_menu_container: VBoxContainer
 var volume_slider: HSlider
 var sensitivity_slider: HSlider
@@ -24,6 +25,7 @@ var main_menu_container: VBoxContainer
 var death_screen: CanvasLayer
 var death_label: Label
 var retry_button: Button
+var death_exit_button: Button
 var auto_respawn_checkbox: CheckBox
 var death_sound: AudioStreamPlayer
 
@@ -37,7 +39,6 @@ func init(player_node: Node, music_controller: Node, sensitivity: float):
 	load_settings()
 
 func create_ui_elements():
-	# Создание экрана смерти
 	death_screen = CanvasLayer.new()
 	death_screen.layer = 2
 	death_screen.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -63,6 +64,12 @@ func create_ui_elements():
 	retry_button.custom_minimum_size = Vector2(400, 100)
 	death_screen.add_child(retry_button)
 	
+	# Кнопка выхода на экране смерти
+	death_exit_button = Button.new()
+	death_exit_button.text = "Выйти"
+	death_exit_button.custom_minimum_size = Vector2(400, 100)
+	death_screen.add_child(death_exit_button)
+	
 	# Создание меню паузы
 	pause_menu = CanvasLayer.new()
 	pause_menu.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -70,7 +77,7 @@ func create_ui_elements():
 	
 	main_menu_container = VBoxContainer.new()
 	main_menu_container.alignment = BoxContainer.ALIGNMENT_CENTER
-	main_menu_container.custom_minimum_size = Vector2(400, 330)
+	main_menu_container.custom_minimum_size = Vector2(400, 430) # Увеличили высоту для новой кнопки
 	pause_menu.add_child(main_menu_container)
 	main_menu_container.name = "MainMenu"
 	
@@ -78,6 +85,17 @@ func create_ui_elements():
 	continue_button.text = "Продолжить"
 	continue_button.custom_minimum_size = Vector2(300, 100)
 	main_menu_container.add_child(continue_button)
+	
+	settings_button = Button.new()
+	settings_button.text = "Настройки"
+	settings_button.custom_minimum_size = Vector2(300, 100)
+	main_menu_container.add_child(settings_button)
+	
+	# Кнопка выхода в меню паузы
+	exit_button = Button.new()
+	exit_button.text = "Выйти"
+	exit_button.custom_minimum_size = Vector2(300, 100)
+	main_menu_container.add_child(exit_button)
 	
 	settings_menu_container = VBoxContainer.new()
 	settings_menu_container.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -141,11 +159,6 @@ func create_ui_elements():
 	back_button.custom_minimum_size = Vector2(200, 50)
 	settings_menu_container.add_child(back_button)
 	
-	settings_button = Button.new()
-	settings_button.text = "Настройки"
-	settings_button.custom_minimum_size = Vector2(300, 100)
-	main_menu_container.add_child(settings_button)
-	
 	death_sound = AudioStreamPlayer.new()
 	death_sound.stream = preload("res://sounds/dead.wav")
 	add_child(death_sound)
@@ -157,6 +170,8 @@ func connect_signals():
 	retry_button.connect("pressed", _on_retry_button_pressed)
 	continue_button.connect("pressed", _on_continue_button_pressed)
 	settings_button.connect("pressed", _on_settings_button_pressed)
+	exit_button.connect("pressed", _on_exit_button_pressed)  # Новая кнопка
+	death_exit_button.connect("pressed", _on_exit_button_pressed)  # Новая кнопка
 	back_button.connect("pressed", _on_back_button_pressed)
 	volume_slider.connect("value_changed", _on_volume_changed)
 	sensitivity_slider.connect("value_changed", _on_sensitivity_changed)
@@ -182,9 +197,15 @@ func show_death_screen():
 		(viewport_size.x - death_label.size.x) / 2,
 		(viewport_size.y - death_label.size.y) / 2 - 100
 	)
+	
 	retry_button.position = Vector2(
 		(viewport_size.x - retry_button.size.x) / 2,
 		(viewport_size.y - retry_button.size.y) / 2 + 100
+	)
+	
+	death_exit_button.position = Vector2(
+		(viewport_size.x - death_exit_button.size.x) / 2,
+		(viewport_size.y - death_exit_button.size.y) / 2 + 230
 	)
 	
 	death_screen.show()
@@ -205,7 +226,7 @@ func toggle_pause_menu():
 		MusicController.set_process(false)
 		_update_menu_position()
 		main_menu_container.show()
-		settings_button.grab_focus()
+		continue_button.grab_focus() 
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 func _on_retry_button_pressed():
@@ -244,6 +265,14 @@ func _on_back_button_pressed():
 	settings_menu_container.hide()
 	main_menu_container.show()
 	settings_button.grab_focus()
+
+func _on_exit_button_pressed():
+	get_tree().paused = false
+	
+	if MusicController:
+		MusicController.stop()
+	
+	get_tree().change_scene_to_file("res://main_menu_scene.tscn")
 
 func _on_auto_respawn_toggled(button_pressed: bool):
 	auto_respawn = button_pressed

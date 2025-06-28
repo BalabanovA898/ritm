@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://b5u86t344ewil"]
+
+[ext_resource type="Script" uid="uid://bp2ltb1lp483i" path="res://main_menu_scene.gd" id="1_yuufg"]
+
+[node name="Node3D" type="Node3D"]
+script = ExtResource("1_yuufg")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+
+[node name="MenuViewport" type="SubViewport" parent="."]
+size = Vector2i(1024, 768)
+
+[node name="MenuSprite" type="Sprite3D" parent="."]
+offset = Vector2(2, 4)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0501796, 0.29445, -0.690146)
