@@ -28,6 +28,7 @@ var DRUNK: CheckBox
 var FTM: CheckBox
 var FIVE_TILES: CheckBox
 var SEVEN_TILES: CheckBox
+var NF: CheckBox
 
 var level_directories = []
 var selected_level_index: int = -1
@@ -307,6 +308,12 @@ func create_mods_ui():
 	FTM.text = "Чувствуй!";
 	mods_list.add_child(FTM);
 	FTM.pressed.connect(func(): Global.FTM_MODE = FTM.button_pressed)
+	
+	NF = CheckBox.new();
+	NF.text = "Одна ошибка и ты ошибся!";
+	mods_list.add_child(NF);
+	NF.pressed.connect(func(): Global.NF_MODE = NF.button_pressed)
+	
 	
 func _set_dt_mode(on):
 	if (on):

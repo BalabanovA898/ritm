@@ -8,3 +8,4 @@ var HT_MODE = false;
 var FIVE_TILE_MODE = false;
 var SEVEN_TILE_MODE = false;
 var DRUNK_MODE = false;
+var NF_MODE = false;

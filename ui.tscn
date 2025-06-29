@@ -1,8 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://c0vcttysmg0m3"]
+[gd_scene load_steps=4 format=3 uid="uid://c0vcttysmg0m3"]
+
+[ext_resource type="Texture2D" uid="uid://bb5nqe7xcbmet" path="res://textures/SSS.png" id="1_fyqef"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_fyqef"]
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_xb563"]
+[sub_resource type="ImageTexture" id="ImageTexture_xb563"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -22,4 +24,128 @@ texture = SubResource("PlaceholderTexture2D_fyqef")
 [node name="Crosshair" type="Sprite2D" parent="."]
 position = Vector2(0, -3.05176e-05)
 scale = Vector2(20, 20)
-texture = SubResource("PlaceholderTexture2D_xb563")
+texture = SubResource("ImageTexture_xb563")
+
+[node name="FinalScore" type="MarginContainer" parent="."]
+visible = false
+custom_minimum_size = Vector2(400, 300)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="FinalScore"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="ScoreContainer" type="HBoxContainer" parent="FinalScore/VBoxContainer"]
+layout_mode = 2
+
+[node name="ScoreLB" type="Label" parent="FinalScore/VBoxContainer/ScoreContainer"]
+layout_mode = 2
+text = "Score: "
+
+[node name="ScoreValueLB" type="Label" parent="FinalScore/VBoxContainer/ScoreContainer"]
+layout_mode = 2
+
+[node name="AccuracyContainer" type="HBoxContainer" parent="FinalScore/VBoxContainer"]
+layout_mode = 2
+
+[node name="AccuracyLB" type="Label" parent="FinalScore/VBoxContainer/AccuracyContainer"]
+layout_mode = 2
+text = "Accuracy: "
+
+[node name="AccuracyValueLB" type="Label" parent="FinalScore/VBoxContainer/AccuracyContainer"]
+layout_mode = 2
+
+[node name="MaxComboConatiner" type="HBoxContainer" parent="FinalScore/VBoxContainer"]
+layout_mode = 2
+
+[node name="MaxComboLB" type="Label" parent="FinalScore/VBoxContainer/MaxComboConatiner"]
+layout_mode = 2
+text = "MaxCombo:"
+
+[node name="MaxComboValueLB" type="Label" parent="FinalScore/VBoxContainer/MaxComboConatiner"]
+layout_mode = 2
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="FinalScore/VBoxContainer"]
+layout_mode = 2
+
+[node name="MissContainer" type="HBoxContainer" parent="FinalScore/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+
+[node name="MissLB" type="Label" parent="FinalScore/VBoxContainer/HBoxContainer4/MissContainer"]
+layout_mode = 2
+text = "0:"
+
+[node name="MissValueLB" type="Label" parent="FinalScore/VBoxContainer/HBoxContainer4/MissContainer"]
+layout_mode = 2
+
+[node name="50Container" type="HBoxContainer" parent="FinalScore/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+
+[node name="a50LB" type="Label" parent="FinalScore/VBoxContainer/HBoxContainer4/50Container"]
+layout_mode = 2
+text = "50:"
+
+[node name="a50ValueLB" type="Label" parent="FinalScore/VBoxContainer/HBoxContainer4/50Container"]
+layout_mode = 2
+
+[node name="100Container" type="HBoxContainer" parent="FinalScore/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+
+[node name="100LB" type="Label" parent="FinalScore/VBoxContainer/HBoxContainer4/100Container"]
+layout_mode = 2
+text = "100:"
+
+[node name="a100ValueLB" type="Label" parent="FinalScore/VBoxContainer/HBoxContainer4/100Container"]
+layout_mode = 2
+
+[node name="200Container" type="HBoxContainer" parent="FinalScore/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+
+[node name="200LB" type="Label" parent="FinalScore/VBoxContainer/HBoxContainer4/200Container"]
+layout_mode = 2
+text = "200:"
+
+[node name="a200ValueLB" type="Label" parent="FinalScore/VBoxContainer/HBoxContainer4/200Container"]
+layout_mode = 2
+
+[node name="300Container" type="HBoxContainer" parent="FinalScore/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+
+[node name="300LB" type="Label" parent="FinalScore/VBoxContainer/HBoxContainer4/300Container"]
+layout_mode = 2
+text = "300:"
+
+[node name="a300ValueLB" type="Label" parent="FinalScore/VBoxContainer/HBoxContainer4/300Container"]
+layout_mode = 2
+
+[node name="Rank" type="Sprite2D" parent="FinalScore/VBoxContainer"]
+position = Vector2(119, 38)
+scale = Vector2(1.84375, 1.60938)
+texture = ExtResource("1_fyqef")
+
+[node name="Controls" type="HBoxContainer" parent="FinalScore/VBoxContainer"]
+layout_mode = 2
+
+[node name="Restart" type="Button" parent="FinalScore/VBoxContainer/Controls"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Restart
+"
+
+[node name="Back" type="Button" parent="FinalScore/VBoxContainer/Controls"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Back
+"

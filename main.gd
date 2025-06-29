@@ -3,8 +3,8 @@ extends Node3D
 const DEBUG_DIFFICULTY = "hard"
 var DEBUG_SPEED = 5.0;
 const JUMP_TIME = 0.4;
-const MIN_PLATFORM_LENGTH = 0.2;
-const DEBUG_NOOB_COEFICIENT = 0.7;
+const MIN_PLATFORM_LENGTH = 0.6; #TODO: FIX TS
+const DEBUG_NOOB_COEFICIENT = 1;
 var level_index: int = Global.selected_level_index
 
 var current_directory
@@ -19,14 +19,38 @@ var SENSETIVITY = 0.003
 var last_platform_position = 0
 var next_platform_position = 0
 
+var player_hp = 100;
+var is_ready_to_respawn = false;
+
+var combo = 0
+var max_combo = 0
+var score = 0;
+var score_mult = 1;
+var stat = [0, 0, 0, 0, 0]; #X, 50, 100, 200, 300
+var acc_sum = 0;
+var acc_cnt = 0;
+
 @onready var Player = get_node("PlayerController").get_child(0)
 @onready var sky: WorldEnvironment = get_node("Sky")
 @onready var light = get_node("Light")
 @onready var borders = [get_node("Border"), get_node("Border2"), get_node("Border3"), get_node("Border4")]
-@onready var timer: Sprite2D = get_node("UI").get_child(0)
+@onready var timer: Sprite2D = get_node("UI/Timer")
 @onready var ui_manager = $UIManager
 
 var time_mult = 1
+
+var A;
+var B;
+var D;
+var S;
+var SS;
+var SSS;
+
+var container: MarginContainer;
+var score_lb: Label;
+var combo_lb: Label;
+var acc_lb: Label;
+var rank_sprite: Sprite2D; 
 
 func _ready():
 	if (!Global.FTM_MODE):
@@ -73,21 +97,57 @@ func _ready():
 	else:
 		time_mult = 1
 	
-	
 	Player.SPEED *= time_mult
 	$MusicController.pitch_scale = time_mult
 	load_level(level_index)
-	$MusicController.load_music(current_directory + "/" + path_to_music.erase(path_to_music.length() -1));
+	$MusicController.load_music(current_directory + "/" + path_to_music.erase(path_to_music.length() -1) if path_to_music[-1] != "3" else path_to_music);
+	
+	score_mult *= 2 if Global.DRUNK_MODE else 1 *\
+	4 if Global.FTM_MODE else 1 *\
+	2 if Global.DT_MODE else 1 *\
+	0.5 if Global.HT_MODE else 1;
+	
+	A = Image.load_from_file("res://textures/A.png")
+	B = Image.load_from_file("res://textures/B.png")
+	D = Image.load_from_file("res://textures/D.png")
+	S = Image.load_from_file("res://textures/S.png")
+	SS = Image.load_from_file("res://textures/SS.png")
+	SSS = Image.load_from_file("res://textures/SSS.png")
 
+	_init_ui();
+	
+	$UI/FinalScore/VBoxContainer/Controls/Back.connect("pressed", func (): get_tree().change_scene_to_file("res://main_menu_scene.tscn"))
+	$UI/FinalScore/VBoxContainer/Controls/Restart.connect("pressed", func(): get_tree().reload_current_scene())
 func _process(delta: float) -> void:
 	timer.scale.x = (1.0 - time / beatmap[-1]) * get_viewport().size.x
-	if Player.global_transform.origin.y <= -1:
+	if player_hp <= 0:
 		ui_manager.show_death_screen()
+		
+	player_hp = min(player_hp + 2 * delta, 100);
+	
+	if (Player.global_transform.origin.y <= -1) and not (is_ready_to_respawn):
+		player_hp -= 20;
+		if Global.NF_MODE: player_hp -= 100;
+		combo = 0;
+		is_ready_to_respawn = true;
+		stat[0] += 1;
+		acc_cnt += 1;
+		_update_stats_ui();
+		
+	if (Player.global_transform.origin.y <= -1) and (beatmap_index == beatmap.size() - 1):
+		_show_stats();
+		
 	if beatmap_index < beatmap.size() - 1:
 		time += delta * 1000
 		if time > beatmap[beatmap_index]:
 			beatmap_index += 1
-			
+			if is_ready_to_respawn:
+				Player.global_transform.origin.y = 1.5;
+				if (Global.FIVE_TILE_MODE or Global.SEVEN_TILE_MODE):
+					Player.global_transform.origin.z = last_platform_position / 2;
+				else:
+					Player.global_transform.origin.z = last_platform_position / 2;
+				is_ready_to_respawn = false;
 			create_platform(beatmap_index)
 			
 			var r = randi_range(0, 1) * 255
@@ -135,10 +195,8 @@ func load_level(index: int):
 			beatmap.remove_at(i)
 			i -= 1
 		i += 1;
-	path_to_music = level.get_slice("AudioFilename: ", 1).get_slice("\n", 0).trim_prefix(" ").trim_suffix("\n");
-	print(path_to_music)
 	
-	path_to_music = level.get_slice("AudioFilename: ", 1).get_slice("\n", 0).trim_prefix(" ").trim_suffix("\n")
+	path_to_music = level.get_slice("AudioFilename:", 1).get_slice("\n", 0).trim_prefix(" ").trim_suffix("\n")
 	print("Загружен уровень: ", list_of_levels[index], " | Музыка: ", path_to_music)
 
 func create_platform(index: int) -> void:
@@ -150,7 +208,7 @@ func create_platform(index: int) -> void:
 	scene.scale.x = duration_as_distance - DEBUG_SPEED * JUMP_TIME * DEBUG_NOOB_COEFICIENT;
 	var c = duration_as_distance/2 + DEBUG_SPEED * JUMP_TIME * DEBUG_NOOB_COEFICIENT;
 	var a = 1 if abs(last_platform_position - next_platform_position) == 2 else 0;
-	var distance_to_next_platform = sqrt(max(c ** 2 - a ** 2 * DEBUG_NOOB_COEFICIENT, 0));
+	var distance_to_next_platform = sqrt(max((c ** 2 - a ** 2) * DEBUG_NOOB_COEFICIENT, 0));
 	last_platform_position = next_platform_position;
 	if (Global.FIVE_TILE_MODE or Global.SEVEN_TILE_MODE):
 		scene.position = Vector3(Player.position.x + distance_to_next_platform , 0, float(next_platform_position)/2);
@@ -221,22 +279,132 @@ func difficulty_to_rotation_speed(difficulty: String):
 	return 0.5
 
 func reset_game():
-	for child in get_children():
-		if child.is_in_group("platform"):
-			child.queue_free()
-	
-	time = 0
-	beatmap_index = 0
-	last_platform_position = 0
-	next_platform_position = 0
-
-	Player.global_transform.origin = Vector3(0, 2, 0)
-	Player.velocity = Vector3.ZERO
-	
-	load_level(level_index)
-	
-	$MusicController.play()
+	get_tree().reload_current_scene();
 
 func _unhandled_input(event):
 	if event.is_action_pressed("ui_cancel"):
 		ui_manager.toggle_pause_menu()
+
+func add_score():
+	var acc = max(1 - abs(beatmap[beatmap_index - 1] - time)/1000, 0) * 100 
+	if (acc > 95): stat[4] += 1;
+	elif (acc > 90): stat[3] += 1;
+	elif (acc > 70): stat[2] += 1;
+	elif (acc > 20): stat[1] += 1;
+	else: stat[0] += 1;
+	
+	if (acc >= 20):
+		combo += 1;
+		max_combo = max(max_combo, combo);
+		acc_cnt += 1;
+	
+	score += 1000 * score_mult * acc;
+	acc_sum += acc;
+	_update_stats_ui()
+	
+func _show_stats():
+	$UI/FinalScore.visible = true;
+	$UI/FinalScore/VBoxContainer/AccuracyContainer/AccuracyValueLB.text = str(int(acc_sum / acc_cnt));
+
+	if (int(acc_sum / acc_cnt if acc_cnt else 0) == 100):
+		$UI/FinalScore/VBoxContainer/Rank.texture = ImageTexture.create_from_image(SSS);
+	elif (int(acc_sum / acc_cnt if acc_cnt else 0) > 95):
+		$UI/FinalScore/VBoxContainer/Rank.texture = ImageTexture.create_from_image(SS);
+	elif (int(acc_sum / acc_cnt if acc_cnt else 0) > 90):
+		$UI/FinalScore/VBoxContainer/Rank.texture = ImageTexture.create_from_image(S);
+	elif (int(acc_sum / acc_cnt if acc_cnt else 0) > 70):
+		$UI/FinalScore/VBoxContainer/Rank.texture = ImageTexture.create_from_image(A);
+	elif (int(acc_sum / acc_cnt if acc_cnt else 0) > 50):
+		$UI/FinalScore/VBoxContainer/Rank.texture = ImageTexture.create_from_image(B);
+	else:
+		$UI/FinalScore/VBoxContainer/Rank.texture = ImageTexture.create_from_image(D);
+
+	$UI/FinalScore/VBoxContainer/ScoreContainer/ScoreValueLB.text = str(score)
+	$UI/FinalScore/VBoxContainer/MaxComboConatiner/MaxComboValueLB.text = str(max_combo)
+	$UI/FinalScore/VBoxContainer/HBoxContainer4/MissContainer/MissValueLB.text = str(stat[0])
+	get_node("UI/FinalScore/VBoxContainer/HBoxContainer4/50Container/a50ValueLB").text = str(stat[1])
+	get_node("UI/FinalScore/VBoxContainer/HBoxContainer4/100Container/a100ValueLB").text = str(stat[2])
+	get_node("UI/FinalScore/VBoxContainer/HBoxContainer4/200Container/a200ValueLB").text = str(stat[3])
+	get_node("UI/FinalScore/VBoxContainer/HBoxContainer4/300Container/a300ValueLB").text = str(stat[4])
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE;
+
+func _init_ui():
+	var window = get_window().size;
+	container = MarginContainer.new();
+	container.global_position.x = window.x - 300;
+	container.global_position.y = window.y / 2 - 150;
+	container.size.x = 300;
+	container.size.y = 300;
+	get_tree().root.get_child(1).add_child(container)
+	
+	var vbox = VBoxContainer.new();
+	container.add_child(vbox);
+	
+	var score_hbox = HBoxContainer.new();
+	vbox.add_child(score_hbox)
+	
+	var score_lable = Label.new();
+	score_lable.text = "Score: " 
+	score_lable.add_theme_font_size_override("font_size", 28)
+	score_hbox.add_child(score_lable)
+	
+	score_lb = Label.new();
+	score_lb.text = "0";
+	score_lb.add_theme_font_size_override("font_size", 28)
+	score_hbox.add_child(score_lb)
+
+	var combo_hbox = HBoxContainer.new();
+	vbox.add_child(combo_hbox)
+	
+	var combo_lable = Label.new();
+	combo_lable.text = "Combo: " 
+	combo_lable.add_theme_font_size_override("font_size", 28)
+	combo_hbox.add_child(combo_lable)
+	
+	combo_lb = Label.new();
+	combo_lb.text = "0";
+	combo_lb.add_theme_font_size_override("font_size", 28)
+	combo_hbox.add_child(combo_lb)
+	
+	var acc_hbox = HBoxContainer.new();
+	vbox.add_child(acc_hbox)
+	
+	var acc_lable = Label.new();
+	acc_lable.text = "Accuracy: "
+	acc_lable.add_theme_font_size_override("font_size", 28) 
+	acc_hbox.add_child(acc_lable)
+	
+	acc_lb = Label.new();
+	acc_lb.text = "0";
+	acc_lb.add_theme_font_size_override("font_size", 28)
+	acc_hbox.add_child(acc_lb)
+	
+	rank_sprite = Sprite2D.new()
+	vbox.add_child(rank_sprite);
+	
+
+func _resize_ui ():
+	var window = get_window().size;
+	container.position.x = window.x - 300;
+	container.position.y = window.y / 2 - 150;
+	
+func _update_stats_ui():
+	score_lb.text = str(int(score))
+	acc_lb.text = str(int(acc_sum / acc_cnt if acc_cnt else 0))
+	combo_lb.text = str(combo);
+	var rank_image;
+	if (int(acc_sum / acc_cnt if acc_cnt else 0) == 100):
+		rank_image = ImageTexture.create_from_image(SSS);
+	elif (int(acc_sum / acc_cnt if acc_cnt else 0) > 95):
+		rank_image = ImageTexture.create_from_image(SS);
+	elif (int(acc_sum / acc_cnt if acc_cnt else 0) > 90):
+		rank_image = ImageTexture.create_from_image(S);
+	elif (int(acc_sum / acc_cnt if acc_cnt else 0) > 70):
+		rank_image = ImageTexture.create_from_image(A);
+	elif (int(acc_sum / acc_cnt if acc_cnt else 0) > 50):
+		rank_image = ImageTexture.create_from_image(B);
+	else:
+		rank_image = ImageTexture.create_from_image(D);
+	rank_sprite.texture = rank_image;
+	rank_sprite.scale.x = 3;
+	rank_sprite.scale.y = 3;

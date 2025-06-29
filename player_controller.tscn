@@ -36,6 +36,7 @@ func _physics_process(delta: float) -> void:
 	
 	if (Input.is_action_just_pressed(\"jump\") or Input.is_action_pressed(\"jump\"))and not is_in_air:
 		velocity.y = JUMP_TIME / 2  * GRAVITY;
+		get_parent().get_parent().add_score();
 		
 	var input_dir = Input.get_vector(\"left\", \"right\", \"up\", \"down\");
 	var directions = (head.global_transform.basis * Vector3(input_dir.x, 0, -1)).normalized()
@@ -52,9 +53,6 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.x = move_toward(directions.x, 0,  SPEED);
 	
-	if transform.origin.y  < -3: 
-		get_tree().reload_current_scene();
-		
 	if Input.is_action_pressed(\"dash_down\") and not is_on_floor():
 		velocity.y = -DASH_DOWN_FORCE
 		if not audio_player.playing:
